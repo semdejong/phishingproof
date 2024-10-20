@@ -25,11 +25,12 @@ import {
   X,
   type Icon as LucideIcon,
 } from "lucide-react"
+import { GiFishingHook } from "react-icons/gi"
 
 export type Icon = LucideIcon
 
 export const Icons = {
-  logo: Command,
+  logo: GiFishingHook,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,

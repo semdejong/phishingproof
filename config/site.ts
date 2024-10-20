@@ -1,13 +1,13 @@
 import { SiteConfig } from "types"
 
 export const siteConfig: SiteConfig = {
-  name: "Taxonomy",
+  name: "PhishingProof",
   description:
-    "An open source application built using the new router, server components and everything new in Next.js 13.",
+    "A webapp that will help you become PhishingProof! Learn how to identify phishing emails and websites. Don't get caught in a phishing scam!",
   url: "https://tx.shadcn.com",
   ogImage: "https://tx.shadcn.com/og.jpg",
   links: {
-    twitter: "https://twitter.com/shadcn",
+    linkedIn: "", //linkedin here
     github: "https://github.com/shadcn/taxonomy",
   },
 }

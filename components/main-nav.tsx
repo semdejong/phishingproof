@@ -22,9 +22,9 @@ export function MainNav({ items, children }: MainNavProps) {
   return (
     <div className="flex gap-6 md:gap-10">
       <Link href="/" className="hidden items-center space-x-2 md:flex">
-        <Icons.logo />
-        <span className="hidden font-bold sm:inline-block">
-          {siteConfig.name}
+        <Icons.logo className="text-4xl text-red-500" />
+        <span className="hidden text-lg font-bold sm:inline-block">
+          Phishing<span className="text-red-500">Proof</span>
         </span>
       </Link>
       {items?.length ? (
