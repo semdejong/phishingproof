@@ -1,16 +1,12 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { signIn } from "next-auth/react"
-import { useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { cn } from "@/lib/utils"
 import { userAuthSchema } from "@/lib/validations/auth"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/components/ui/use-toast"
@@ -18,8 +14,10 @@ import { Icons } from "@/components/icons"
 
 type FormData = z.infer<typeof userAuthSchema>
 
-export function UserAuthForm({ className, ...props }: any) {
+export function UserRegisterForm({ className, ...props }: any) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [firstname, setFirstname] = React.useState<string>("")
+  const [lastname, setLastname] = React.useState<string>("")
   const [email, setEmail] = React.useState<string>("")
   const [password, setPassword] = React.useState<string>("")
   const searchParams = useSearchParams()
@@ -29,39 +27,87 @@ export function UserAuthForm({ className, ...props }: any) {
   async function onSubmit() {
     setIsLoading(true)
 
-    const status = await signIn("credentials", {
-      redirect: false,
-      email: email,
-      password: password,
-      callbackUrl: searchParams?.get("from") || undefined,
+    //make post request
+    const result = await fetch("/api/account/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ firstname, lastname, email, password }),
     })
+
+    const signInResult = (await result.json()) || ({} as any)
 
     setIsLoading(false)
 
-    if (status?.ok) {
-      window.location.href = searchParams?.get("from") || "/dashboard"
-      return
+    if (result.status !== 200) {
+      setPassword("")
+      return toast({
+        title: "Error signing up.",
+        description:
+          signInResult.message || "Uw request kon niet worden verwerkt.",
+        variant: "destructive",
+      })
     }
 
+    setFirstname("")
+    setLastname("")
+    setEmail("")
+    setPassword("")
+
+    // router.push("/login")
+
     return toast({
-      title: "Something went wrong.",
-      description: status?.error || "Unknown issue occured.",
-      variant: "destructive",
-      action: status?.error?.includes("verified") ? (
-        <>
-          <Button onClick={() => push("/account/verify/reset")}>
-            Nieuwe verificatie code
-          </Button>
-        </>
-      ) : (
-        <></>
-      ),
+      title: "Welcome to PhishingProof.",
+      description: "You are ready to become un-hooked.",
     })
   }
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <div className="grid gap-2">
+        <div className="flex w-full space-x-2">
+          <div className="">
+            <Label className="sr-only" htmlFor="email">
+              First Name
+            </Label>
+            <Input
+              id="firstname"
+              placeholder="John"
+              value={firstname}
+              type="text"
+              autoComplete="name"
+              autoCorrect="off"
+              onChange={(e) => setFirstname(e.target.value)}
+              disabled={isLoading}
+            />
+            {/* {errors?.email && (
+              <p className="px-1 text-xs text-red-600">
+                {errors.email.message}
+              </p>
+            )} */}
+          </div>
+          <div className="">
+            <Label className="sr-only" htmlFor="email">
+              Last name
+            </Label>
+            <Input
+              id="lastname"
+              placeholder="Doe"
+              value={lastname}
+              type="text"
+              autoComplete="name"
+              autoCorrect="off"
+              onChange={(e) => setLastname(e.target.value)}
+              disabled={isLoading}
+            />
+            {/* {errors?.email && (
+              <p className="px-1 text-xs text-red-600">
+                {errors.email.message}
+              </p>
+            )} */}
+          </div>
+        </div>
         <div className="grid gap-1">
           <Label className="sr-only" htmlFor="email">
             Email
@@ -71,9 +117,9 @@ export function UserAuthForm({ className, ...props }: any) {
             placeholder="name@example.com"
             value={email}
             type="email"
-            onChange={(e) => setEmail(e.target.value)}
             autoCapitalize="none"
             autoComplete="email"
+            onChange={(e) => setEmail(e.target.value)}
             autoCorrect="off"
             disabled={isLoading}
           />
@@ -92,10 +138,10 @@ export function UserAuthForm({ className, ...props }: any) {
             placeholder="********"
             value={password}
             type="password"
-            onChange={(e) => setPassword(e.target.value)}
             autoCapitalize="none"
             autoComplete="none"
             autoCorrect="off"
+            onChange={(e) => setPassword(e.target.value)}
             disabled={isLoading}
           />
           {/* {errors?.password && (
@@ -110,7 +156,7 @@ export function UserAuthForm({ className, ...props }: any) {
           onClick={onSubmit}
         >
           {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
-          Login
+          Sign up
         </button>
       </div>
       <div className="relative">
@@ -119,20 +165,17 @@ export function UserAuthForm({ className, ...props }: any) {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            IF YOU DON&apos;T HAVE AN ACCOUNT
+            OR IF YOU ALREADY HAVE AN ACCOUNT
           </span>
         </div>
       </div>
-
       <button
         type="button"
-        onClick={() => {
-          push("/register")
-        }}
         className={cn(buttonVariants({ variant: "outline" }))}
+        onClick={() => push("/login")}
         disabled={isLoading}
       >
-        Create an account
+        Sign in
       </button>
     </div>
   )

@@ -8,9 +8,11 @@ import {
   CreditCard,
   File,
   FileText,
+  Gauge,
   HelpCircle,
   Image,
   Laptop,
+  LayoutDashboard,
   Loader2,
   LucideProps,
   Moon,
@@ -27,6 +29,7 @@ import {
 } from "lucide-react"
 import { AiFillSafetyCertificate } from "react-icons/ai"
 import {
+  GiBoatFishing,
   GiBrain,
   GiFactory,
   GiFishingHook,
@@ -36,6 +39,7 @@ import {
 import { IoFish } from "react-icons/io5"
 import { MdPersonOff } from "react-icons/md"
 import { RiMailSendFill } from "react-icons/ri"
+import { TbFolderQuestion } from "react-icons/tb"
 
 export type Icon = LucideIcon
 
@@ -43,6 +47,9 @@ export const Icons = {
   logo: GiFishingHook,
   email: RiMailSendFill,
   brain: GiBrain,
+  quiz: TbFolderQuestion,
+  categories: LayoutDashboard,
+  guage: Gauge,
   safe: AiFillSafetyCertificate,
   close: X,
   spinner: Loader2,
@@ -50,6 +57,7 @@ export const Icons = {
   chevronRight: ChevronRight,
   trash: Trash,
   evolve: GiUpgrade,
+  boat: GiBoatFishing,
   post: FileText,
   factory: GiFactory,
   page: File,

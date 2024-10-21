@@ -7,8 +7,8 @@ export default function DashboardLoading() {
   return (
     <DashboardShell>
       <DashboardHeader
-        heading="Dashboard"
-        text="Keep track of the general progress."
+        heading="Categories"
+        text="Create and manage categories."
       >
         <PostCreateButton />
       </DashboardHeader>

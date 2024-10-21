@@ -1,7 +1,7 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { compare } from "bcryptjs"
 import { NextAuthOptions } from "next-auth"
-import EmailProvider from "next-auth/providers/email"
-import GitHubProvider from "next-auth/providers/github"
+import CredentialsProvider from "next-auth/providers/credentials"
 import { Client } from "postmark"
 
 import { env } from "@/env.mjs"
@@ -22,50 +22,47 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   providers: [
-    GitHubProvider({
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
-    }),
-    EmailProvider({
-      from: env.SMTP_FROM,
-      sendVerificationRequest: async ({ identifier, url, provider }) => {
-        const user = await db.user.findUnique({
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "naam@example.com",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+        },
+      },
+      async authorize(credentials) {
+        const user = await db.user.findFirst({
           where: {
-            email: identifier,
-          },
-          select: {
-            emailVerified: true,
-          },
-        })
-
-        const templateId = user?.emailVerified
-          ? env.POSTMARK_SIGN_IN_TEMPLATE
-          : env.POSTMARK_ACTIVATION_TEMPLATE
-        if (!templateId) {
-          throw new Error("Missing template id")
-        }
-
-        const result = await postmarkClient.sendEmailWithTemplate({
-          TemplateId: parseInt(templateId),
-          To: identifier,
-          From: provider.from as string,
-          TemplateModel: {
-            action_url: url,
-            product_name: siteConfig.name,
-          },
-          Headers: [
-            {
-              // Set this to prevent Gmail from threading emails.
-              // See https://stackoverflow.com/questions/23434110/force-emails-not-to-be-grouped-into-conversations/25435722.
-              Name: "X-Entity-Ref-ID",
-              Value: new Date().getTime() + "",
+            email: {
+              equals: credentials?.email,
+              mode: "insensitive",
             },
-          ],
+          },
         })
 
-        if (result.ErrorCode) {
-          throw new Error(result.Message)
+        if (!user) {
+          throw new Error("Wrong credentials")
         }
+
+        if (user.verification_token) {
+          throw new Error("Account not verified")
+        }
+
+        const passwordMatch = await compare(
+          credentials?.password || "",
+          user.password
+        )
+
+        if (!passwordMatch) {
+          throw new Error("Wrong credentials")
+        }
+
+        return user
       },
     }),
   ],
@@ -96,7 +93,8 @@ export const authOptions: NextAuthOptions = {
 
       return {
         id: dbUser.id,
-        name: dbUser.name,
+        firstName: dbUser.firstname,
+        lastName: dbUser.lastname,
         email: dbUser.email,
         picture: dbUser.image,
       }

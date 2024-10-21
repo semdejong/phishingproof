@@ -3,10 +3,6 @@ import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { getCurrentUser } from "@/lib/session"
-import { BarChart } from "@/components/ui/bar-chart"
-import { LineChart } from "@/components/ui/line-chart"
-import { PieChart } from "@/components/ui/pie-chart"
-import { RadarChart } from "@/components/ui/radar-chart"
 import { EmptyPlaceholder } from "@/components/empty-placeholder"
 import { DashboardHeader } from "@/components/header"
 import { PostCreateButton } from "@/components/post-create-button"
@@ -42,16 +38,30 @@ export default async function DashboardPage() {
   return (
     <DashboardShell>
       <DashboardHeader
-        heading="Dashboard"
-        text="Keep track of the general progress"
-      ></DashboardHeader>
-      <div className="flex flex-col space-y-4">
-        <BarChart />
-        <div className=" flex flex-row justify-between">
-          <RadarChart />
-          <LineChart />
-          <PieChart />
-        </div>
+        heading="Categories"
+        text="Create and manage categories."
+      >
+        <PostCreateButton />
+      </DashboardHeader>
+      <div>
+        {posts?.length ? (
+          <div className="divide-y divide-border rounded-md border">
+            {posts.map((post) => (
+              <PostItem key={post.id} post={post} />
+            ))}
+          </div>
+        ) : (
+          <EmptyPlaceholder>
+            <EmptyPlaceholder.Icon name="post" />
+            <EmptyPlaceholder.Title>
+              No categories created
+            </EmptyPlaceholder.Title>
+            <EmptyPlaceholder.Description>
+              You don&apos;t have any categories yet. Start creating categories.
+            </EmptyPlaceholder.Description>
+            <PostCreateButton variant="outline" />
+          </EmptyPlaceholder>
+        )}
       </div>
     </DashboardShell>
   )

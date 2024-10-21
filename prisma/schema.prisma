@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model Account {
@@ -43,13 +44,18 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+  id                   String    @id @default(cuid())
+  firstname            String?
+  lastname             String?
+  email                String?   @unique
+  password             String?
+  emailVerified        DateTime?
+  image                String?
+  verification_token   String?   @map(name: "verification_token") @db.Text
+  reset_password_token String?   @default("") @map(name: "reset_password_token") @db.Text
+  socketId             String?   @map(name: "socket_id")
+  createdAt            DateTime  @default(now()) @map(name: "created_at")
+  updatedAt            DateTime  @default(now()) @map(name: "updated_at")
 
   accounts Account[]
   sessions Session[]

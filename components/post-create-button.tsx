@@ -27,7 +27,7 @@ export function PostCreateButton({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title: "Untitled Post",
+        title: "Untitled Article",
       }),
     })
 
@@ -36,7 +36,7 @@ export function PostCreateButton({
     if (!response?.ok) {
       if (response.status === 402) {
         return toast({
-          title: "Limit of 3 posts reached.",
+          title: "Limit of 3 artciles reached.",
           description: "Please upgrade to the PRO plan.",
           variant: "destructive",
         })
@@ -75,7 +75,7 @@ export function PostCreateButton({
       ) : (
         <Icons.add className="mr-2 h-4 w-4" />
       )}
-      New post
+      New article
     </button>
   )
 }
