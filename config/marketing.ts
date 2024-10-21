@@ -7,6 +7,10 @@ export const marketingConfig: MarketingConfig = {
       href: "/#what-is-phishing",
     },
     {
+      title: "Quizzes",
+      href: "/quizzes",
+    },
+    {
       title: "Facts",
       href: "/#facts",
     },
