@@ -1,7 +1,8 @@
 export type Question = {
   question: string
-  options: string[]
-  correctAnswer: number
+  options?: string[]
+  openAnswer?: string;
+  correctAnswer?: number
   image?: string
-  variant: ["regular-mcq", "mcq-with-image", "analyze-email"]
+  variant: "image-based-mcq" | "MCQ" | "email-based-mcq" | "text-based-open-ended";
 }
