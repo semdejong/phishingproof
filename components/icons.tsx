@@ -25,21 +25,38 @@ import {
   X,
   type Icon as LucideIcon,
 } from "lucide-react"
-import { GiFishingHook } from "react-icons/gi"
+import { AiFillSafetyCertificate } from "react-icons/ai"
+import {
+  GiBrain,
+  GiFactory,
+  GiFishingHook,
+  GiSpearfishing,
+  GiUpgrade,
+} from "react-icons/gi"
+import { IoFish } from "react-icons/io5"
+import { MdPersonOff } from "react-icons/md"
+import { RiMailSendFill } from "react-icons/ri"
 
 export type Icon = LucideIcon
 
 export const Icons = {
   logo: GiFishingHook,
+  email: RiMailSendFill,
+  brain: GiBrain,
+  safe: AiFillSafetyCertificate,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
   trash: Trash,
+  evolve: GiUpgrade,
   post: FileText,
+  factory: GiFactory,
   page: File,
   media: Image,
   settings: Settings,
+  deadFish: GiSpearfishing,
+  fish: IoFish,
   billing: CreditCard,
   ellipsis: MoreVertical,
   add: Plus,
@@ -47,6 +64,7 @@ export const Icons = {
   user: User,
   arrowRight: ArrowRight,
   help: HelpCircle,
+  humanError: MdPersonOff,
   pizza: Pizza,
   sun: SunMedium,
   moon: Moon,
