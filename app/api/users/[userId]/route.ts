@@ -35,7 +35,7 @@ export async function PATCH(
         id: session.user.id,
       },
       data: {
-        name: payload.name,
+        firstname: payload.name,
       },
     })
 
