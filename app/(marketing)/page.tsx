@@ -122,7 +122,7 @@ export default async function IndexPage() {
         <div className="absolute -left-24 top-44 z-10">
           <Icons.email className="z-0 hidden h-48 w-48 -rotate-12 text-red-500 opacity-30 lg:flex lg:h-[200px] lg:w-[200px]" />
         </div>
-        <div className="absolute z-10 -ml-2 hidden scale-x-[-1]  rotate-12 lg:-bottom-10 lg:-right-72 lg:flex">
+        <div className="absolute z-10 -ml-2 hidden rotate-12  scale-x-[-1] lg:-bottom-10 lg:-right-72 lg:flex">
           <Icons.fish className="z-0 h-48 w-48 text-red-500 opacity-30 lg:h-[300px] lg:w-[300px]" />
         </div>
         <div
@@ -229,7 +229,7 @@ export default async function IndexPage() {
         id="slogan"
         className="container flex justify-center space-y-6 py-8 dark:bg-transparent md:py-12 lg:py-24"
       >
-        <h2 className="text-4xl font-extrabold text-center">
+        <h2 className="text-center text-4xl font-extrabold">
           <TypingSlogan />
         </h2>
       </section>
