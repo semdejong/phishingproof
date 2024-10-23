@@ -13,16 +13,16 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { UserAvatar } from "@/components/user-avatar"
 
-interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
-  user: Pick<User, "name" | "image" | "email">
-}
-
-export function UserAccountNav({ user }: UserAccountNavProps) {
+export function UserAccountNav({ user }: any) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <UserAvatar
-          user={{ name: user.name || null, image: user.image || null }}
+          user={{
+            firstname: user.firstname || null,
+            lastname: user.lastname,
+            image: user.image || null,
+          }}
           className="h-8 w-8"
         />
       </DropdownMenuTrigger>
