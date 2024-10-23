@@ -19,7 +19,7 @@ export default function QuizContainer({
   href,
 }: QuizContainerProps) {
   return (
-    <div className="relative overflow-hidden rounded-lg border bg-background p-2 duration-200 ease-in-out hover:m-1 hover:scale-110 hover:bg-gray-100 ">
+    <div className="relative overflow-hidden rounded-lg border bg-background p-2 duration-200 ease-in-out hover:m-1 hover:scale-110 hover:bg-gray-100 dark:hover:bg-gray-800">
       <div className="flex h-[250px] flex-col items-center justify-between rounded-md p-4 ">
         <Icon className="size-[40px] text-red-500" />
         <div className="flex flex-col items-center space-y-2">
