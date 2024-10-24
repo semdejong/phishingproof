@@ -2,107 +2,172 @@
 
 import * as React from "react"
 import { Post } from "@prisma/client"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { PlusCircle, Trash2 } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Question } from "@/types/question"
 
-interface EditPostModalProps {
+export interface EditPostModalProps {
   isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   post: Pick<Post, "id" | "title">
-  onSave: (newTitle: string) => void
+  onSave: (newTitle: string) => Promise<void>
+  onAddQuestions: (questions: Question[]) => Promise<void>
 }
 
-export function EditPostModal({
-  isOpen,
-  setIsOpen,
-  post,
-  onSave,
-}: EditPostModalProps) {
-  const [newTitle, setNewTitle] = React.useState<string>(post.title)
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [newQuestion, setNewQuestion] = React.useState<string>("") // State for the new question input
-  const [questions, setQuestions] = React.useState<string[]>([]) // State to manage the list of questions
+export function EditPostModal({ isOpen, setIsOpen, post, onSave, onAddQuestions }: EditPostModalProps) {
+  const [categoryTitle, setCategoryTitle] = React.useState(post.title)
+  const [questions, setQuestions] = React.useState<Question[]>([])
+  const [newQuestion, setNewQuestion] = React.useState("")
+  const [newAnswers, setNewAnswers] = React.useState(["", "", "", ""])
+  const [correctAnswer, setCorrectAnswer] = React.useState(0)
 
-  // Function to handle saving the post title
-  async function handleSave() {
-    setIsLoading(true)
-
-    // Simulate saving the updated title
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate async request
-    setIsLoading(false)
-    onSave(newTitle) // Call onSave handler to update the title
-    setIsOpen(false) // Close the modal
-  }
-
-  // Function to add a new question to the list
   const handleAddQuestion = () => {
-    if (newQuestion.trim()) {
-      setQuestions((prevQuestions) => [...prevQuestions, newQuestion]) // Add new question to the array
-      setNewQuestion("") // Clear the input field after adding
+    if (newQuestion.trim() && newAnswers.every(answer => answer.trim())) {
+      setQuestions([
+        ...questions,
+        {
+          question: newQuestion,
+          answers: newAnswers,
+          correctAnswer: correctAnswer,
+        },
+      ])
+      setNewQuestion("")
+      setNewAnswers(["", "", "", ""])
+      setCorrectAnswer(0)
     }
   }
 
-  if (!isOpen) return null
+  const handleRemoveQuestion = (index: number) => {
+    setQuestions(questions.filter((_, i) => i !== index))
+  }
+
+  const handleSave = () => {
+    onSave(categoryTitle)
+    if (questions.length) {
+      onAddQuestions(questions)
+    }
+    setIsOpen(false)
+  }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-5xl rounded-lg bg-white p-6 shadow-lg">
-        <h2 className="mb-4 text-lg font-bold">Edit Post Title</h2>
-        <input
-          type="text"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          placeholder="Enter post title"
-          className="mb-4 w-full rounded border border-gray-300 p-2"
-        />
-
-        <h3 className="text-md mb-4 font-semibold">Add Questions</h3>
-        <div className="mb-4 flex space-x-2">
-          <input
-            type="text"
-            value={newQuestion}
-            onChange={(e) => setNewQuestion(e.target.value)}
-            placeholder="Enter a question"
-            className="w-full rounded border border-gray-300 p-2"
-          />
-          <button
-            onClick={handleAddQuestion}
-            className="rounded bg-green-500 px-4 py-2 text-white"
-          >
-            +
-          </button>
-        </div>
-
-        {/* Display the list of questions with scroll */}
-        <h3 className="text-md mb-4 font-semibold">Questions</h3>
-        <ul
-          className="mb-4 list-disc overflow-y-auto overflow-x-hidden border border-gray-300"
-          style={{ maxHeight: "150px" }} // Set max height for the list to scroll after 6 questions
-        >
-          {questions.map((question, index) => (
-            <div key={index} className="flex flex-col items-center ">
-              <div className="ml-1 mt-2 w-full p-2 text-left text-sm">
-                {question}
-              </div>
-              <div className="mt-2 h-[1px] w-[97%]   border-b  border-b-gray-300 " />
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle>Edit Quiz Category</DialogTitle>
+        </DialogHeader>
+        <Card className="border-none pt-4">
+          <CardContent className="space-y-4 border-none px-0">
+            <div>
+              <Label htmlFor="category-title" className="mb-1">
+                Category Title
+              </Label>
+              <Input
+                id="category-title"
+                value={categoryTitle}
+                onChange={(e) => setCategoryTitle(e.target.value)}
+                placeholder="Enter category title"
+              />
             </div>
-          ))}
-        </ul>
 
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={() => setIsOpen(false)}
-            className="rounded bg-gray-300 px-4 py-2"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            className="rounded bg-blue-500 px-4 py-2 text-white"
-            disabled={isLoading}
-          >
-            {isLoading ? "Saving..." : "Save"}
-          </button>
-        </div>
-      </div>
-    </div>
+            <div>
+              <Label htmlFor="new-question" className="mb-1">
+                New Question
+              </Label>
+              <Textarea
+                id="new-question"
+                value={newQuestion}
+                className="resize-none"
+                onChange={(e) => setNewQuestion(e.target.value)}
+                placeholder="Enter new question"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Answers</Label>
+              {newAnswers.map((answer, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <Input
+                    value={answer}
+                    onChange={(e) => {
+                      const updatedAnswers = [...newAnswers]
+                      updatedAnswers[index] = e.target.value
+                      setNewAnswers(updatedAnswers)
+                    }}
+                    placeholder={`Answer ${index + 1}`}
+                  />
+                  <RadioGroup
+                    value={correctAnswer.toString()}
+                    onValueChange={(value) => setCorrectAnswer(parseInt(value))}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value={index.toString()} id={`answer-${index}`} />
+                      <Label htmlFor={`answer-${index}`}>Correct</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+              ))}
+            </div>
+
+            <Button onClick={handleAddQuestion} className="w-full">
+              <PlusCircle className="mr-2 h-4 w-4" /> Add Question
+            </Button>
+
+            <div>
+              <Label>Questions</Label>
+              <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                {questions.map((question, index) => (
+                  <Card key={index} className="mb-4">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 px-6 pb-0 pt-2">
+                      <CardTitle className="text-sm font-medium">
+                        Question {index + 1}
+                      </CardTitle>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveQuestion(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="p-0 px-6 pb-4">
+                      <p className="text-sm font-bold">{question.question}</p>
+                      <ul className="mt-2 grid grid-cols-2 space-y-1">
+                        {question.answers.map((answer, answerIndex) => (
+                          <li
+                            key={answerIndex}
+                            className={`text-sm ${
+                              answerIndex === question.correctAnswer
+                                ? "font-medium text-green-600"
+                                : ""
+                            }`}
+                          >
+                            {answer}
+                            {answerIndex === question.correctAnswer && " (Correct)"}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ))}
+              </ScrollArea>
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSave}>Save Changes</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </DialogContent>
+    </Dialog>
   )
 }

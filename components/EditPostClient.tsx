@@ -1,8 +1,9 @@
-"use client" // Client-side interaction
+"use client" 
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { Post } from "@prisma/client"
+import { Question } from "@/types/question"
 import { EditPostModal } from "@/app/(dashboard)/dashboard/categories/EditPostModal"
 
 interface EditPostClientProps {
@@ -37,6 +38,21 @@ export function EditPostClient({ post }: EditPostClientProps) {
       console.error("Failed to update the post")
     }
   }
+  const handleAddQuestions = async (questions: Question[]) => {
+    const response = await fetch(`/api/posts/${post.id}/questions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ questions }),
+    })
+
+    if (response.ok) {
+      router.refresh() 
+    } else {
+      console.error("Failed to add questions")
+    }
+  }
 
   return (
     <>
@@ -50,6 +66,7 @@ export function EditPostClient({ post }: EditPostClientProps) {
           setIsOpen={setIsModalOpen}
           post={post}
           onSave={handleSave}
+          onAddQuestions={handleAddQuestions}
         />
       )}
     </>
