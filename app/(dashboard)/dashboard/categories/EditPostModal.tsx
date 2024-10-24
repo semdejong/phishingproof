@@ -44,7 +44,7 @@ export function EditPostModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-96 w-full max-w-5xl rounded-lg bg-white p-6 shadow-lg">
+      <div className="w-full max-w-5xl rounded-lg bg-white p-6 shadow-lg">
         <h2 className="mb-4 text-lg font-bold">Edit Post Title</h2>
         <input
           type="text"
@@ -74,13 +74,15 @@ export function EditPostModal({
         {/* Display the list of questions with scroll */}
         <h3 className="text-md mb-4 font-semibold">Questions</h3>
         <ul
-          className="mb-4 list-disc overflow-y-auto border border-gray-300 overflow-x-hidden"
+          className="mb-4 list-disc overflow-y-auto overflow-x-hidden border border-gray-300"
           style={{ maxHeight: "150px" }} // Set max height for the list to scroll after 6 questions
         >
           {questions.map((question, index) => (
             <div key={index} className="flex flex-col items-center ">
-              <div className="ml-1 mt-2 text-sm p-2 text-left w-full">{question}</div>
-              <div className="mt-2 h-[1px] border-b   border-b-gray-300  w-[97%] " />
+              <div className="ml-1 mt-2 w-full p-2 text-left text-sm">
+                {question}
+              </div>
+              <div className="mt-2 h-[1px] w-[97%]   border-b  border-b-gray-300 " />
             </div>
           ))}
         </ul>

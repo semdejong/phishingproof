@@ -4,6 +4,7 @@ import { Post } from "@prisma/client"
 import { formatDate } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PostOperations } from "@/components/post-operations"
+
 import { EditPostClient } from "./EditPostClient"
 
 interface PostItemProps {
@@ -20,7 +21,7 @@ export function PostItem({ post }: PostItemProps) {
           <EditPostClient post={post} />
         </div>
         <div>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             {formatDate(post.createdAt?.toDateString())}
           </p>
         </div>
