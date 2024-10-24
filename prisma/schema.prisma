@@ -88,9 +88,9 @@ model Post {
   createdAt  DateTime @default(now()) @map(name: "created_at")
   updatedAt  DateTime @default(now()) @map(name: "updated_at")
   authorId   String
-  categoryId String
+  categoryId String?
 
-  Category Categories @relation(fields: [categoryId], references: [id])
+  Category Categories? @relation(fields: [categoryId], references: [id])
 
   author User @relation(fields: [authorId], references: [id])
 
