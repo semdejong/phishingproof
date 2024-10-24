@@ -4,6 +4,7 @@ import { Post } from "@prisma/client"
 import { formatDate } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PostOperations } from "@/components/post-operations"
+import { EditPostClient } from "./EditPostClient"
 
 interface PostItemProps {
   post: Pick<Post, "id" | "title" | "published" | "createdAt">
@@ -13,14 +14,13 @@ export function PostItem({ post }: PostItemProps) {
   return (
     <div className="flex items-center justify-between p-4">
       <div className="grid gap-1">
-        <Link
-          href={`/editor/${post.id}`}
-          className="font-semibold hover:underline"
-        >
-          {post.title}
-        </Link>
+        {/* The post title that will be clickable */}
+        <div className="font-semibold hover:underline">
+          {/* EditPostClient handles the modal logic */}
+          <EditPostClient post={post} />
+        </div>
         <div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {formatDate(post.createdAt?.toDateString())}
           </p>
         </div>

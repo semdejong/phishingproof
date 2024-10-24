@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-
 import { cn } from "@/lib/utils"
 import { ButtonProps, buttonVariants } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
@@ -17,26 +16,35 @@ export function PostCreateButton({
 }: PostCreateButtonProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false)
+  const [categoryName, setCategoryName] = React.useState<string>("")
 
-  async function onClick() {
+  async function onSave() {
+    if (!categoryName) {
+      return toast({
+        title: "Please enter a category name.",
+        variant: "destructive",
+      })
+    }
+
     setIsLoading(true)
-
     const response = await fetch("/api/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title: "Untitled Article",
+        title: categoryName,
       }),
     })
 
     setIsLoading(false)
+    setIsModalOpen(false)
 
-    if (!response?.ok) {
+    if (!response.ok) {
       if (response.status === 402) {
         return toast({
-          title: "Limit of 3 artciles reached.",
+          title: "Limit of 3 categories reached.",
           description: "Please upgrade to the PRO plan.",
           variant: "destructive",
         })
@@ -44,38 +52,77 @@ export function PostCreateButton({
 
       return toast({
         title: "Something went wrong.",
-        description: "Your post was not created. Please try again.",
+        description: "Your category was not created. Please try again.",
         variant: "destructive",
       })
     }
 
     const post = await response.json()
+    toast({
+      title: "Category created successfully!",
+    })
 
-    // This forces a cache invalidation.
     router.refresh()
-
-    router.push(`/editor/${post.id}`)
+    // router.push(`/editor/${post.id}`)
   }
 
   return (
-    <button
-      onClick={onClick}
-      className={cn(
-        buttonVariants({ variant }),
-        {
-          "cursor-not-allowed opacity-60": isLoading,
-        },
-        className
+    <>
+      {/* Button to open modal */}
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className={cn(
+          buttonVariants({ variant }),
+          { "cursor-not-allowed opacity-60": isLoading },
+          className
+        )}
+        disabled={isLoading}
+        {...props}
+      >
+        {isLoading ? (
+          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Icons.add className="mr-2 h-4 w-4" />
+        )}
+        New Category
+      </button>
+
+      {/* Modal for input */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-lg font-bold">Create New Category</h2>
+            <input
+              type="text"
+              value={categoryName}
+              onChange={(e) => setCategoryName(e.target.value)}
+              placeholder="Enter category name"
+              className="mb-4 w-full rounded border border-gray-300 p-2"
+            />
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="rounded bg-gray-300 px-4 py-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={onSave}
+                className={cn(buttonVariants({ variant: "default" }), {
+                  "cursor-not-allowed opacity-60": isLoading,
+                })}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Save"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-      disabled={isLoading}
-      {...props}
-    >
-      {isLoading ? (
-        <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-      ) : (
-        <Icons.add className="mr-2 h-4 w-4" />
-      )}
-      New article
-    </button>
+    </>
   )
 }
