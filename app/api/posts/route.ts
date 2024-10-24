@@ -9,6 +9,7 @@ import { getUserSubscriptionPlan } from "@/lib/subscription"
 const postCreateSchema = z.object({
   title: z.string(),
   content: z.string().optional(),
+  categoryId: z.string().optional(),
 })
 
 export async function GET() {
@@ -71,6 +72,7 @@ export async function POST(req: Request) {
         title: body.title,
         content: body.content,
         authorId: session.user.id,
+        categoryId: (body.categoryId || undefined) as any,
       },
       select: {
         id: true,

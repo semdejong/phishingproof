@@ -13,7 +13,6 @@ import { PlusCircle, Trash2 } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Question } from "@/types/question"
 
-
 export interface EditPostModalProps {
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -31,11 +30,14 @@ export function EditPostModal({ isOpen, setIsOpen, post, onSave, onAddQuestions 
 
   const handleAddQuestion = () => {
     if (newQuestion.trim() && newAnswers.every(answer => answer.trim())) {
-      setQuestions([...questions, {
-        question: newQuestion,
-        answers: newAnswers,
-        correctAnswer: correctAnswer
-      }])
+      setQuestions([
+        ...questions,
+        {
+          question: newQuestion,
+          answers: newAnswers,
+          correctAnswer: correctAnswer,
+        },
+      ])
       setNewQuestion("")
       setNewAnswers(["", "", "", ""])
       setCorrectAnswer(0)
@@ -48,7 +50,7 @@ export function EditPostModal({ isOpen, setIsOpen, post, onSave, onAddQuestions 
 
   const handleSave = () => {
     onSave(categoryTitle)
-    if(questions.length) {
+    if (questions.length) {
       onAddQuestions(questions)
     }
     setIsOpen(false)
@@ -56,14 +58,16 @@ export function EditPostModal({ isOpen, setIsOpen, post, onSave, onAddQuestions 
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-xl ">
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Edit Quiz Category</DialogTitle>
         </DialogHeader>
         <Card className="border-none pt-4">
           <CardContent className="space-y-4 border-none px-0">
             <div>
-              <Label htmlFor="category-title" className="mb-1">Category Title</Label>
+              <Label htmlFor="category-title" className="mb-1">
+                Category Title
+              </Label>
               <Input
                 id="category-title"
                 value={categoryTitle}
@@ -73,7 +77,9 @@ export function EditPostModal({ isOpen, setIsOpen, post, onSave, onAddQuestions 
             </div>
 
             <div>
-              <Label htmlFor="new-question" className="mb-1">New Question</Label>
+              <Label htmlFor="new-question" className="mb-1">
+                New Question
+              </Label>
               <Textarea
                 id="new-question"
                 value={newQuestion}
@@ -96,7 +102,10 @@ export function EditPostModal({ isOpen, setIsOpen, post, onSave, onAddQuestions 
                     }}
                     placeholder={`Answer ${index + 1}`}
                   />
-                  <RadioGroup value={correctAnswer.toString()} onValueChange={(value) => setCorrectAnswer(parseInt(value))}>
+                  <RadioGroup
+                    value={correctAnswer.toString()}
+                    onValueChange={(value) => setCorrectAnswer(parseInt(value))}
+                  >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value={index.toString()} id={`answer-${index}`} />
                       <Label htmlFor={`answer-${index}`}>Correct</Label>
@@ -127,7 +136,7 @@ export function EditPostModal({ isOpen, setIsOpen, post, onSave, onAddQuestions 
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </CardHeader>
-                    <CardContent className=" p-0 px-6 pb-4">
+                    <CardContent className="p-0 px-6 pb-4">
                       <p className="text-sm font-bold">{question.question}</p>
                       <ul className="mt-2 grid grid-cols-2 space-y-1">
                         {question.answers.map((answer, answerIndex) => (
@@ -151,7 +160,9 @@ export function EditPostModal({ isOpen, setIsOpen, post, onSave, onAddQuestions 
             </div>
 
             <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setIsOpen(false)}>
+                Cancel
+              </Button>
               <Button onClick={handleSave}>Save Changes</Button>
             </div>
           </CardContent>
