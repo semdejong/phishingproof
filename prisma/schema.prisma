@@ -50,6 +50,8 @@ model User {
   email                String?   @unique
   password             String?
   emailVerified        DateTime?
+  role                 String?   @default("user")
+  APIKey               String?   @unique
   image                String?
   verification_token   String?   @map(name: "verification_token") @db.Text
   reset_password_token String?   @default("") @map(name: "reset_password_token") @db.Text
@@ -79,15 +81,68 @@ model VerificationToken {
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   Json?
-  published Boolean  @default(false)
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
-  authorId  String
+  id         String   @id @default(cuid())
+  title      String
+  content    Json?
+  published  Boolean  @default(false)
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @map(name: "updated_at")
+  authorId   String
+  categoryId String
+
+  Category Categories @relation(fields: [categoryId], references: [id])
 
   author User @relation(fields: [authorId], references: [id])
 
   @@map(name: "posts")
+}
+
+model Categories {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  createdAt DateTime    @default(now()) @map(name: "created_at")
+  updatedAt DateTime    @default(now()) @map(name: "updated_at")
+  Questions Questions[]
+  Post      Post[]
+  Quizzes   Quizzes[]
+
+  @@map(name: "categories")
+}
+
+model Questions {
+  id         String @id @default(cuid())
+  question   String
+  categoryId String
+
+  Category Categories @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  updatedAt DateTime  @default(now()) @map(name: "updated_at")
+  Answers   Answers[]
+
+  @@map(name: "questions")
+}
+
+model Answers {
+  id         String  @id @default(cuid())
+  answer     String
+  questionId String
+  isCorrect  Boolean
+
+  Question Questions @relation(fields: [questionId], references: [id])
+
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  @@map(name: "answers")
+}
+
+model Quizzes {
+  id         String       @id @default(cuid())
+  title      String
+  categories Categories[]
+  createdAt  DateTime     @default(now()) @map(name: "created_at")
+  updatedAt  DateTime     @default(now()) @map(name: "updated_at")
+
+  @@map(name: "quizzes")
 }
