@@ -16,7 +16,7 @@
     "postinstall": "prisma generate",
     "migrate": "dotenv -e .env.local npx prisma migrate dev",
     "createsql": "dotenv -e .env.local npx prisma migrate dev --create-only",
-    "studio": "dotenv -e .env.local -- npx prisma studio"
+    "studio": "dotenv -e .env.local -- npx prisma studio"
   },
   "dependencies": {
     "@editorjs/code": "^2.8.0",
