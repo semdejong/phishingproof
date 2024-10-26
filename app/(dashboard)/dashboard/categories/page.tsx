@@ -43,83 +43,97 @@
 //       >
 //         <PostCreateButton />
 //       </DashboardHeader>
-      // <div>
-      //   {categories?.length ? (
-      //     <div className="divide-border divide-y rounded-md border">
-      //       {categories.map((post) => (
-      //         <PostItem key={post.id} post={post} />
-      //       ))}
-      //     </div>
-      //   ) : (
-      //     <EmptyPlaceholder>
-      //       <EmptyPlaceholder.Icon name="post" />
-      //       <EmptyPlaceholder.Title>
-      //         No categories created
-      //       </EmptyPlaceholder.Title>
-      //       <EmptyPlaceholder.Description>
-      //         You don&apos;t have any categories yet. Start creating categories.
-      //       </EmptyPlaceholder.Description>
-      //       <PostCreateButton variant="outline" />
-      //     </EmptyPlaceholder>
-      //   )}
-      // </div>
+// <div>
+//   {categories?.length ? (
+//     <div className="divide-border divide-y rounded-md border">
+//       {categories.map((post) => (
+//         <PostItem key={post.id} post={post} />
+//       ))}
+//     </div>
+//   ) : (
+//     <EmptyPlaceholder>
+//       <EmptyPlaceholder.Icon name="post" />
+//       <EmptyPlaceholder.Title>
+//         No categories created
+//       </EmptyPlaceholder.Title>
+//       <EmptyPlaceholder.Description>
+//         You don&apos;t have any categories yet. Start creating categories.
+//       </EmptyPlaceholder.Description>
+//       <PostCreateButton variant="outline" />
+//     </EmptyPlaceholder>
+//   )}
+// </div>
 //     </DashboardShell>
 //   )
 // }
 
-import { DashboardHeader } from '@/components/header'
-import { DashboardShell } from '@/components/shell'
-import { getCurrentUser } from '@/lib/session'
-import { redirect } from 'next/navigation'
-import React from 'react'
+import { redirect } from "next/navigation"
+
 import { authOptions } from "@/lib/auth"
-import { EmptyPlaceholder } from '@/components/empty-placeholder'
-import { CategoryItem } from '@/components/category-item'
-import { CategoryCreateButton } from '@/components/category-create'
+import { db } from "@/lib/db"
+import { getCurrentUser } from "@/lib/session"
+import { CategoryCreateButton } from "@/components/category-create"
+import { CategoryItem } from "@/components/category-item"
+import { EmptyPlaceholder } from "@/components/empty-placeholder"
+import { DashboardHeader } from "@/components/header"
+import { DashboardShell } from "@/components/shell"
 
 export default async function DashboardPage() {
-  const user = await getCurrentUser()
-  if (!user) {
-      redirect(authOptions?.pages?.signIn || "/login")
-    }
-  
-    //get categories via /api/categories/getAll
-    const categories = await fetch(`/api/categories/getAll?page=1&pageSize=10`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
+  const pageSize = 20
+  const page = 1
+  const user = (await getCurrentUser()) as any
+
+  console.log(user)
+  if (!user || user.role !== "admin") {
+    redirect(authOptions?.pages?.signIn || "/login")
+  }
+
+  //get categories via /api/categories/getAll
+  const categories = await db.categories.findMany({
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+    include: {
+      Questions: {
+        include: {
+          Answers: true,
+        },
       },
+      Post: true,
+    },
+  })
 
-    })
-    .then((res) => res.json())
-    .then((data) => data)
-    .catch((error) => console.log(error));
-  
-    console.log(categories)
-    return (
-      <DashboardShell>
-        <DashboardHeader heading="Categories" text="Create and manage categories." />
-        <div>
-          {categories?.length ? (
-            <div className="divide-border divide-y rounded-md border">
-              {categories.map((category) => (
-                <div key={category.id}> {/* Assuming category has an id */}
-                  <CategoryItem category={category} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyPlaceholder>
-              <EmptyPlaceholder.Icon name="post" />
-              <EmptyPlaceholder.Title>No categories created</EmptyPlaceholder.Title>
-              <EmptyPlaceholder.Description>
-                You don&apos;t have any categories yet. Start creating categories.
-              </EmptyPlaceholder.Description>
-              <CategoryCreateButton variant="outline" />
-            </EmptyPlaceholder>
-          )}
-        </div>
-      </DashboardShell>
-    )
+  return (
+    <DashboardShell>
+      <DashboardHeader
+        heading="Categories"
+        text="Create and manage categories."
+      >
+        <CategoryCreateButton variant="default" />
+      </DashboardHeader>
+      <div>
+        {categories?.length ? (
+          <div className="divide-y divide-border rounded-md border">
+            {categories.map((category) => (
+              <div key={category.id}>
+                {" "}
+                {/* Assuming category has an id */}
+                <CategoryItem category={category} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyPlaceholder>
+            <EmptyPlaceholder.Icon name="post" />
+            <EmptyPlaceholder.Title>
+              No categories created
+            </EmptyPlaceholder.Title>
+            <EmptyPlaceholder.Description>
+              You don&apos;t have any categories yet. Start creating categories.
+            </EmptyPlaceholder.Description>
+            <CategoryCreateButton variant="outline" />
+          </EmptyPlaceholder>
+        )}
+      </div>
+    </DashboardShell>
+  )
 }
-

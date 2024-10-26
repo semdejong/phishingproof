@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
+
 import { cn } from "@/lib/utils"
 import { ButtonProps, buttonVariants } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
@@ -27,13 +28,13 @@ export function CategoryCreateButton({
       })
     }
     setIsLoading(true)
-    const response = await fetch("/api/category/create.ts", {
+    const response = await fetch("/api/categories/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title: categoryName,
+        label: categoryName,
       }),
     })
 
@@ -41,7 +42,6 @@ export function CategoryCreateButton({
     setIsModalOpen(false)
 
     if (!response.ok) {
-
       if (response.status === 402) {
         return toast({
           title: "Limit of 3 categories reached.",
@@ -50,12 +50,16 @@ export function CategoryCreateButton({
         })
       }
 
+      const error = await response.json()
+
       return toast({
         title: "Something went wrong.",
-        description: "Your category was not created. Please try again.",
+        description: error.message,
         variant: "destructive",
       })
     }
+
+    router.refresh()
 
     const category = await response.json()
     toast({
