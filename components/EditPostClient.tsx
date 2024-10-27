@@ -40,21 +40,6 @@ export function EditPostClient({ post }: EditPostClientProps) {
       console.error("Failed to update the post")
     }
   }
-  const handleAddQuestions = async (questions: Question[]) => {
-    const response = await fetch(`/api/posts/${post.id}/questions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ questions }),
-    })
-
-    if (response.ok) {
-      router.refresh()
-    } else {
-      console.error("Failed to add questions")
-    }
-  }
 
   return (
     <>
