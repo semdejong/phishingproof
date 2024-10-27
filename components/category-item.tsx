@@ -1,5 +1,4 @@
-import Link from "next/link"
-import { Categories, Post } from "@prisma/client"
+import { Categories } from "@prisma/client"
 
 import { formatDate } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
