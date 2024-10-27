@@ -1,21 +1,20 @@
 "use client"
 
+// Client-side interaction
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { Post } from "@prisma/client"
 
-import { Question } from "@/types/question"
+import { EditCategoryModal } from "@/app/(dashboard)/dashboard/categories/EditCategoryModal"
 
-import { EditPostModal } from "./EditPostModal"
-
-interface EditPostClientProps {
-  post: Pick<Post, "id" | "title">
+interface EditCategoryClientProps {
+  category: any
 }
 
-export function EditPostClient({ post }: EditPostClientProps) {
+export function EditCategoryClient({ category }: EditCategoryClientProps) {
   const router = useRouter()
   const [isModalOpen, setIsModalOpen] = React.useState(false)
-  const [currentTitle, setCurrentTitle] = React.useState(post.title)
+  const [currentTitle, setCurrentTitle] = React.useState(category.title)
 
   const handleEditClick = () => {
     setIsModalOpen(true) // Open the modal when the title is clicked
@@ -26,7 +25,7 @@ export function EditPostClient({ post }: EditPostClientProps) {
     setCurrentTitle(newTitle) // Update the title in the UI
 
     // Send the updated title to the server
-    const response = await fetch(`/api/posts/${post.id}`, {
+    const response = await fetch(`/api/categories/${category.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -37,37 +36,22 @@ export function EditPostClient({ post }: EditPostClientProps) {
     if (response.ok) {
       router.refresh() // Refresh the page after saving
     } else {
-      console.error("Failed to update the post")
-    }
-  }
-  const handleAddQuestions = async (questions: Question[]) => {
-    const response = await fetch(`/api/posts/${post.id}/questions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ questions }),
-    })
-
-    if (response.ok) {
-      router.refresh()
-    } else {
-      console.error("Failed to add questions")
+      console.error("Failed to update the category")
     }
   }
 
   return (
     <>
       <button onClick={handleEditClick} className="text-left">
-        {currentTitle}
+        {category.name}
       </button>
 
       {isModalOpen && (
-        <EditPostModal
+        <EditCategoryModal
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
-          post={post}
-          onSave={handleSave}
+          category={category}
+          // onSave={handleSave} // Uncommented to use the function
         />
       )}
     </>
