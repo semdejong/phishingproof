@@ -1,7 +1,7 @@
 export type Question = {
+  id: string
   question: string
-  answers: string[]
-  correctAnswer: number
+  Answers: any[]
   image?: string
   variant?: ["regular-mcq", "mcq-with-image", "analyze-email"]
 }

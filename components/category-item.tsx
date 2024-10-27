@@ -3,9 +3,8 @@ import { Categories, Post } from "@prisma/client"
 
 import { formatDate } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
+import { EditCategoryClient } from "@/components/edit-category-client"
 import { PostOperations } from "@/components/post-operations"
-
-import { EditPostClient } from "./EditPostClient"
 
 interface CategoryItemProps {
   category: Categories
@@ -16,10 +15,10 @@ export function CategoryItem({ category }: CategoryItemProps) {
     <div className="flex items-center justify-between p-4">
       <div className="grid gap-1">
         <div className="font-semibold hover:underline">
-          {category.name}
+          <EditCategoryClient category={category} />
         </div>
         <div>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             {formatDate(category.createdAt?.toDateString())}
           </p>
         </div>

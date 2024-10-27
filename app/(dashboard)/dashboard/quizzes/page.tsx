@@ -20,14 +20,11 @@ export default async function DashboardPage() {
     redirect(authOptions?.pages?.signIn || "/login")
   }
 
-  const posts = await db.post.findMany({
-    where: {
-      authorId: user.id,
-    },
+  const quizzes = await db.quizzes.findMany({
     select: {
       id: true,
       title: true,
-      published: true,
+      categories: true,
       createdAt: true,
     },
     orderBy: {
@@ -37,17 +34,15 @@ export default async function DashboardPage() {
 
   return (
     <DashboardShell>
-      <DashboardHeader
-        heading="Categories"
-        text="Create and manage categories."
-      >
+      <DashboardHeader heading="Quiz" text="Create and manage Quiz.">
         <PostCreateButton />
       </DashboardHeader>
       <div>
-        {posts?.length ? (
+        {quizzes?.length ? (
           <div className="divide-y divide-border rounded-md border">
-            {posts.map((post) => (
-              <PostItem key={post.id} post={post} />
+            {quizzes.map((quiz) => (
+              // <PostItem key={quiz.id} post={post} />
+              <></>
             ))}
           </div>
         ) : (

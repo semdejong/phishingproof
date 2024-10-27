@@ -29,11 +29,11 @@ export default async function handler(
   }
 
   if (!label) {
-    res.status(400).json({ message: "Label is required" })
+    return res.status(400).json({ message: "Label is required" })
   }
 
   if (label.length < 2) {
-    res.status(400).json({
+    return res.status(400).json({
       message: "Label is required and must be at least 2 charaters long",
     })
   }
@@ -49,12 +49,12 @@ export default async function handler(
     })
     .then((category) => {
       if (category) {
-        res.status(400).json({ message: "Category already exists" })
+        return res.status(400).json({ message: "Category already exists" })
       }
     })
     .catch((error) => {
       console.log(error)
-      res.status(400).json({
+      return res.status(400).json({
         message: "Something went wrong while trying to connect to the db",
       })
     })

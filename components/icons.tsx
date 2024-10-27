@@ -39,7 +39,7 @@ import {
 import { IoFish } from "react-icons/io5"
 import { MdPersonOff } from "react-icons/md"
 import { RiMailSendFill } from "react-icons/ri"
-import { TbFolderQuestion } from "react-icons/tb"
+import { TbEdit, TbEditOff, TbFolderQuestion } from "react-icons/tb"
 
 export type Icon = LucideIcon
 
@@ -47,6 +47,8 @@ export const Icons = {
   logo: GiFishingHook,
   email: RiMailSendFill,
   brain: GiBrain,
+  edit: TbEdit,
+  editOff: TbEditOff,
   quiz: TbFolderQuestion,
   categories: LayoutDashboard,
   guage: Gauge,

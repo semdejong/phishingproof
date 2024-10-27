@@ -27,11 +27,11 @@ export default async function handler(
   const answers = req.body.answers
 
   if (!questionLabel) {
-    res.status(400).json({ message: "Question label is required" })
+    return res.status(400).json({ message: "Question label is required" })
   }
 
   if (!categoryId) {
-    res.status(400).json({ message: "Category id is required" })
+    return res.status(400).json({ message: "Category id is required" })
   }
 
   const category = await db.categories.findUnique({
@@ -41,18 +41,18 @@ export default async function handler(
   })
 
   if (!category) {
-    res.status(400).json({ message: "Category not found" })
+    return res.status(400).json({ message: "Category not found" })
   }
 
   if (questionLabel.length < 2) {
-    res.status(400).json({
+    return res.status(400).json({
       message:
         "Question label is required and must be at least 2 charaters long",
     })
   }
 
   if (!answers || !Array.isArray(answers) || answers.length < 4) {
-    res.status(400).json({
+    return res.status(400).json({
       message: "Answers are required and must be at least 4 of them",
     })
   }
@@ -61,8 +61,8 @@ export default async function handler(
 
   try {
     answers.forEach((answer: any) => {
-      if (answer.label.length < 2) {
-        res.status(400).json({
+      if (!answer.answer || answer?.answer?.length < 2) {
+        return res.status(400).json({
           message: "Answer is required and must be at least 2 charaters long",
         })
       }
@@ -73,13 +73,13 @@ export default async function handler(
     })
   } catch (error) {
     console.log(error)
-    res.status(400).json({
+    return res.status(400).json({
       message: "Something went wrong while trying to validate the answers",
     })
   }
 
   if (amountOfCorrectAnswers < 1) {
-    res.status(400).json({
+    return res.status(400).json({
       message: "At least one answer must be correct",
     })
   }
@@ -94,7 +94,7 @@ export default async function handler(
   const answersToCreate = answers.map((answer: any) => {
     return {
       questionId: question.id,
-      answer: answer.label,
+      answer: answer.answer,
       isCorrect: answer.isCorrect,
     }
   })

@@ -34,7 +34,7 @@ export const dashboardConfig: DashboardConfig = {
     },
     {
       title: "Quizzes",
-      href: "/quizzes#quiz-overview-section",
+      href: "/dashboard/quizzes",
       icon: "quiz",
     },
     {
