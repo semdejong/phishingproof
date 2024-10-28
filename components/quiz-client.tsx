@@ -6,7 +6,7 @@ import { EditQuizModal } from "@/components/edit-quiz-modal"
 import { PostOperations } from "@/components/post-operations"
 
 interface QuizItemProps {
-  quiz: Quizzes
+  quiz: any
 }
 
 export function QuizItem({ quiz }: QuizItemProps) {
@@ -14,10 +14,10 @@ export function QuizItem({ quiz }: QuizItemProps) {
     <div className="flex items-center justify-between p-4">
       <div className="grid gap-1">
         <div className="font-semibold hover:underline">
-          <EditQuizModal quiz={quiz} allCategories={quiz.categories}/>
+          <EditQuizModal quiz={quiz} allCategories={quiz.categories} />
         </div>
         <div>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             {formatDate(quiz.createdAt?.toDateString())}
           </p>
         </div>

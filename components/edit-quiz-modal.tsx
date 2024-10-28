@@ -2,8 +2,9 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { Quizzes, Categories } from "@prisma/client"
+import { Categories, Quizzes } from "@prisma/client"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -17,18 +18,19 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/components/ui/use-toast"
-import { Badge } from "@/components/ui/badge"
 
 interface EditQuizModalProps {
-  quiz: Quizzes;
-  allCategories: Categories[];
+  quiz: any
+  allCategories: Categories[]
 }
 
 export function EditQuizModal({ quiz, allCategories }: EditQuizModalProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
   const [quizName, setQuizName] = React.useState(quiz.title)
-  const [linkedCategories, setLinkedCategories] = React.useState(quiz.categories)
+  const [linkedCategories, setLinkedCategories] = React.useState(
+    quiz.categories
+  )
 
   const handleSave = async () => {
     try {
@@ -39,7 +41,7 @@ export function EditQuizModal({ quiz, allCategories }: EditQuizModalProps) {
         },
         body: JSON.stringify({
           title: quizName,
-          categoryIds: linkedCategories.map(cat => cat.id),
+          categoryIds: linkedCategories.map((cat) => cat.id),
         }),
       })
 
@@ -63,9 +65,9 @@ export function EditQuizModal({ quiz, allCategories }: EditQuizModalProps) {
   }
 
   const toggleCategory = (category: Categories) => {
-    setLinkedCategories(prev => 
-      prev.some(c => c.id === category.id)
-        ? prev.filter(c => c.id !== category.id)
+    setLinkedCategories((prev) =>
+      prev.some((c) => c.id === category.id)
+        ? prev.filter((c) => c.id !== category.id)
         : [...prev, category]
     )
   }
@@ -99,10 +101,14 @@ export function EditQuizModal({ quiz, allCategories }: EditQuizModalProps) {
           <div className="space-y-2">
             <Label>Linked Categories</Label>
             <div className="flex flex-wrap gap-2">
-              {allCategories.map(category => (
+              {allCategories.map((category) => (
                 <Badge
                   key={category.id}
-                  variant={linkedCategories.some(c => c.id === category.id) ? "default" : "outline"}
+                  variant={
+                    linkedCategories.some((c) => c.id === category.id)
+                      ? "default"
+                      : "outline"
+                  }
                   className="cursor-pointer"
                   onClick={() => toggleCategory(category)}
                 >
