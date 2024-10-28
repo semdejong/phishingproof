@@ -45,12 +45,14 @@ export default async function handler(
     })
   }
 
+  console.log(categories)
+
   //check if categories exist
   for (let i = 0; i < categories.length; i++) {
     const category = await db.categories.findUnique({
-      where: {
-        id: categories[i].id,
-      },
+     where: {
+      id: categories[i],
+     }
     })
 
     if (!category) {
@@ -85,7 +87,7 @@ export default async function handler(
       categories: {
         connect: categories.map((category: any) => {
           return {
-            id: category.id,
+            id: category,
           }
         }),
       },

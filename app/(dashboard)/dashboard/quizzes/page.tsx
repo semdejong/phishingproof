@@ -6,7 +6,10 @@ import { getCurrentUser } from "@/lib/session"
 import { EmptyPlaceholder } from "@/components/empty-placeholder"
 import { DashboardHeader } from "@/components/header"
 import { PostCreateButton } from "@/components/post-create-button"
+import { PostItem } from "@/components/post-item"
 import { DashboardShell } from "@/components/shell"
+import { QuizCreateButton } from "@/components/quiz-create"
+import { QuizItem } from "@/components/quiz-client"
 
 export const metadata = {
   title: "Dashboard",
@@ -20,40 +23,63 @@ export default async function DashboardPage() {
   }
 
   const quizzes = await db.quizzes.findMany({
-    select: {
-      id: true,
-      title: true,
-      categories: true,
-      createdAt: true,
+    include: {
+      categories: {
+        include: {
+          Questions: {
+            include: {
+              Answers: true,
+            },
+          },
+          Post: true
+        }
+      }
     },
     orderBy: {
       updatedAt: "desc",
     },
   })
+  //fetch categories to pass them to the quiz create button
+  const pageSize = 20
+  const page = 1
+  const categories = await db.categories.findMany({
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+    include: {
+      Questions: {
+        include: {
+          Answers: true,
+        },
+      },
+      Post: true,
+    },
+  })
 
   return (
     <DashboardShell>
-      <DashboardHeader heading="Quiz" text="Create and manage Quiz.">
-        <PostCreateButton />
+      <DashboardHeader
+        heading="Quizzes"
+        text="Create and manage quizzes."
+      >
+        <QuizCreateButton categories={categories}/>
       </DashboardHeader>
       <div>
         {quizzes?.length ? (
-          <div className="divide-y divide-border rounded-md border">
+          <div className="divide-border divide-y rounded-md border">
             {quizzes.map((quiz) => (
-              // <PostItem key={quiz.id} post={post} />
-              <></>
+              <QuizItem key={quiz.id} quiz={quiz} />
             ))}
           </div>
         ) : (
           <EmptyPlaceholder>
             <EmptyPlaceholder.Icon name="post" />
             <EmptyPlaceholder.Title>
-              No categories created
+              No Quizzes created
             </EmptyPlaceholder.Title>
             <EmptyPlaceholder.Description>
-              You don&apos;t have any categories yet. Start creating categories.
+              You don&apos;t have any categories yet. Start creating quizzes.
             </EmptyPlaceholder.Description>
-            <PostCreateButton variant="outline" />
+            <QuizCreateButton variant="outline" categories={categories}/>
           </EmptyPlaceholder>
         )}
       </div>
