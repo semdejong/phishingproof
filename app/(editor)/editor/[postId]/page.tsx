@@ -37,6 +37,7 @@ export default async function EditorPage({ params }: EditorPageProps) {
       post={{
         id: post.id,
         title: post.title,
+        categoryId: post.categoryId,
         content: post.content,
         published: post.published,
       }}

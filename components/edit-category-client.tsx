@@ -20,24 +20,9 @@ export function EditCategoryClient({ category }: EditCategoryClientProps) {
     setIsModalOpen(true) // Open the modal when the title is clicked
   }
 
-  const handleSave = async (newTitle: string) => {
-    setIsModalOpen(false) // Close the modal
-    setCurrentTitle(newTitle) // Update the title in the UI
-
-    // Send the updated title to the server
-    const response = await fetch(`/api/categories/${category.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title: newTitle }),
-    })
-
-    if (response.ok) {
-      router.refresh() // Refresh the page after saving
-    } else {
-      console.error("Failed to update the category")
-    }
+  const switchModal = (value) => {
+    setIsModalOpen(value)
+    router.refresh()
   }
 
   return (
@@ -49,7 +34,7 @@ export function EditCategoryClient({ category }: EditCategoryClientProps) {
       {isModalOpen && (
         <EditCategoryModal
           isOpen={isModalOpen}
-          setIsOpen={setIsModalOpen}
+          setIsOpen={switchModal}
           category={category}
           // onSave={handleSave} // Uncommented to use the function
         />

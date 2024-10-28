@@ -27,6 +27,7 @@ export async function GET() {
         title: true,
         published: true,
         createdAt: true,
+        categoryId: true,
       },
       where: {
         authorId: user.id,

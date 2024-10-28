@@ -20,6 +20,8 @@ export default async function DashboardPage() {
     redirect(authOptions?.pages?.signIn || "/login")
   }
 
+  const categories = await db.categories.findMany({})
+
   const posts = await db.post.findMany({
     where: {
       authorId: user.id,
@@ -27,6 +29,7 @@ export default async function DashboardPage() {
     select: {
       id: true,
       title: true,
+      categoryId: true,
       published: true,
       createdAt: true,
     },
@@ -42,11 +45,32 @@ export default async function DashboardPage() {
       </DashboardHeader>
       <div>
         {posts?.length ? (
-          <div className="divide-y divide-border rounded-md border">
-            {posts.map((post) => (
-              <PostItem key={post.id} post={post} />
-            ))}
-          </div>
+          <>
+            {categories.map((category) => {
+              return (
+                <div className="flex flex-col">
+                  <h1 className="mb-1 mt-2 text-xl font-bold" key={category.id}>
+                    {category.name}
+                  </h1>
+                  <div className="divide-y divide-border rounded-md border">
+                    {posts.map((post) =>
+                      post.categoryId === category.id ? (
+                        <PostItem key={post.id} post={post} />
+                      ) : null
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+            <h1 className="mb-1 mt-2 text-xl font-bold">Unassigned</h1>
+            <div className="divide-y divide-border rounded-md border">
+              {posts.map((post) =>
+                post.categoryId === null ? (
+                  <PostItem key={post.id} post={post} />
+                ) : null
+              )}
+            </div>
+          </>
         ) : (
           <EmptyPlaceholder>
             <EmptyPlaceholder.Icon name="post" />

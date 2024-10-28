@@ -67,6 +67,7 @@ export async function PATCH(
       data: {
         title: body.title,
         content: body.content,
+        categoryId: body.categoryId,
       },
     })
 

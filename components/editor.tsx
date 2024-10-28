@@ -13,12 +13,23 @@ import * as z from "zod"
 import "@/styles/editor.css"
 import { cn } from "@/lib/utils"
 import { postPatchSchema } from "@/lib/validations/post"
+import useCategories from "@/hooks/useCategories"
 import { buttonVariants } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
 import { Icons } from "@/components/icons"
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select"
+
 interface EditorProps {
-  post: Pick<Post, "id" | "title" | "content" | "published">
+  post: Pick<Post, "id" | "title" | "content" | "published" | "categoryId">
 }
 
 type FormData = z.infer<typeof postPatchSchema>
@@ -31,6 +42,12 @@ export function Editor({ post }: EditorProps) {
   const router = useRouter()
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
   const [isMounted, setIsMounted] = React.useState<boolean>(false)
+  const [selectedCategory, setSelectedCategory] = React.useState<
+    string | undefined
+  >(post.categoryId ? post.categoryId.toString() : undefined)
+  const categories = useCategories(1, 100)
+
+  console.log(1211212, post)
 
   const initializeEditor = React.useCallback(async () => {
     const EditorJS = (await import("@editorjs/editorjs")).default
@@ -96,6 +113,7 @@ export function Editor({ post }: EditorProps) {
       body: JSON.stringify({
         title: data.title,
         content: blocks,
+        categoryId: selectedCategory,
       }),
     })
 
@@ -126,7 +144,7 @@ export function Editor({ post }: EditorProps) {
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center space-x-10">
             <Link
-              href="/dashboard"
+              href="/dashboard/articles"
               className={cn(buttonVariants({ variant: "ghost" }))}
             >
               <>
@@ -138,12 +156,33 @@ export function Editor({ post }: EditorProps) {
               {post.published ? "Published" : "Draft"}
             </p>
           </div>
-          <button type="submit" className={cn(buttonVariants())}>
-            {isSaving && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            <span>Save</span>
-          </button>
+          <div className="flex items-center space-x-4">
+            <Select
+              onValueChange={setSelectedCategory}
+              value={selectedCategory as string}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Categories</SelectLabel>
+                  {categories?.isLoading && (
+                    <SelectItem value="...">Loading...</SelectItem>
+                  )}
+                  {categories?.categories?.categories?.map((category) => (
+                    <SelectItem value={category.id}>{category.name}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <button type="submit" className={cn(buttonVariants())}>
+              {isSaving && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              <span>Save</span>
+            </button>
+          </div>
         </div>
         <div className="prose prose-stone mx-auto w-[800px] dark:prose-invert">
           <TextareaAutosize

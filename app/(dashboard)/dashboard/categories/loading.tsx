@@ -1,3 +1,4 @@
+import { CategoryCreateButton } from "@/components/category-create"
 import { DashboardHeader } from "@/components/header"
 import { PostCreateButton } from "@/components/post-create-button"
 import { PostItem } from "@/components/post-item"
@@ -10,7 +11,7 @@ export default function DashboardLoading() {
         heading="Categories"
         text="Create and manage categories."
       >
-        <PostCreateButton />
+        <CategoryCreateButton />
       </DashboardHeader>
       <div className="divide-border-200 divide-y rounded-md border">
         <PostItem.Skeleton />

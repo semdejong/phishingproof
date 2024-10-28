@@ -8,6 +8,7 @@ import { PlusCircle, Trash2 } from "lucide-react"
 import { Question } from "@/types/question"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import DeleteButton from "@/components/ui/delete-button"
 import {
   Dialog,
   DialogContent,
@@ -241,13 +242,10 @@ EditPostModalProps) {
                         <Button variant="default" size="sm">
                           <Icons.email className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleRemoveQuestion(index)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <DeleteButton
+                          url={`/api/questions/delete?id=${question.id}`}
+                          cb={() => handleRemoveQuestion(index)}
+                        />
                       </div>
                     </CardHeader>
                     <CardContent className="p-0 px-6 pb-4">
