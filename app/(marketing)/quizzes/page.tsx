@@ -107,42 +107,42 @@ export default function QuizOverview() {
             description="Learn the basics of phishing attacks. 95% of cybersecurity breaches are due to human mistakes, such as clicking malicious "
             Icon={Icons.fish}
             buttonText="Start quiz"
-            href="/quiz"
+            quizId="cm2t35z7a00029u2ggsbjqdfi"
           />
           <QuizContainer
             title="Phishing 102"
             description="95% of cybersecurity breaches are due to human mistakes, such as clicking malicious links, which phishing exploits. "
             Icon={Icons.humanError}
             buttonText="Start quiz"
-            href="/quiz"
+            quizId="cm2t35z7a00029u2ggsbjqdfi"
           />
           <QuizContainer
             title="Phishing 103"
             description="Modern phishing techniques are more sophisticated, using fake websites, personalized emails, to deceive victims."
             Icon={Icons.evolve}
             buttonText="Start quiz"
-            href="/quiz"
+            quizId="cm2t35z7a00029u2ggsbjqdfi"
           />
           <QuizContainer
             title="Phishing 104"
             description="Companies that provide interactive phishing awareness training reduce their risk of a phishing attack by up to 70%."
             Icon={Icons.evolve}
             buttonText="Start quiz"
-            href="/quiz"
+            quizId="cm2t35z7a00029u2ggsbjqdfi"
           />
           <QuizContainer
             title="Phishing 105"
             description="From healthcare to finance. Attackers often target industries with valuable data, but no company is immune."
             Icon={Icons.evolve}
             buttonText="Start quiz"
-            href="/quiz"
+            quizId="cm2t35z7a00029u2ggsbjqdfi"
           />
           <QuizContainer
             title="Phishing 106"
             description="Companies that provide interactive phishing awareness training reduce their risk of a phishing attack by up to 70%."
             Icon={Icons.evolve}
             buttonText="Start quiz"
-            href="/quiz"
+            quizId="cm2t35z7a00029u2ggsbjqdfi"
           />
           {/*             
           <div className="bg-background relative overflow-hidden rounded-lg border p-2">

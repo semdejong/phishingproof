@@ -63,10 +63,11 @@ model User {
   sessions Session[]
   Post     Post[]
 
-  stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
-  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
-  stripePriceId          String?   @map(name: "stripe_price_id")
-  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
+  stripeCustomerId       String?        @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId   String?        @unique @map(name: "stripe_subscription_id")
+  stripePriceId          String?        @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd DateTime?      @map(name: "stripe_current_period_end")
+  QuizInstance           QuizInstance[]
 
   @@map(name: "users")
 }
@@ -116,9 +117,10 @@ model Questions {
 
   Category Categories @relation(fields: [categoryId], references: [id])
 
-  createdAt DateTime  @default(now()) @map(name: "created_at")
-  updatedAt DateTime  @default(now()) @map(name: "updated_at")
-  Answers   Answers[]
+  createdAt        DateTime           @default(now()) @map(name: "created_at")
+  updatedAt        DateTime           @default(now()) @map(name: "updated_at")
+  Answers          Answers[]
+  QuestionInstance QuestionInstance[]
 
   @@map(name: "questions")
 }
@@ -131,18 +133,50 @@ model Answers {
 
   Question Questions @relation(fields: [questionId], references: [id])
 
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
+  createdAt        DateTime           @default(now()) @map(name: "created_at")
+  updatedAt        DateTime           @default(now()) @map(name: "updated_at")
+  QuestionInstance QuestionInstance[]
 
   @@map(name: "answers")
 }
 
 model Quizzes {
-  id         String       @id @default(cuid())
-  title      String
-  categories Categories[]
-  createdAt  DateTime     @default(now()) @map(name: "created_at")
-  updatedAt  DateTime     @default(now()) @map(name: "updated_at")
+  id           String         @id @default(cuid())
+  title        String
+  categories   Categories[]
+  createdAt    DateTime       @default(now()) @map(name: "created_at")
+  updatedAt    DateTime       @default(now()) @map(name: "updated_at")
+  QuizInstance QuizInstance[]
 
   @@map(name: "quizzes")
+}
+
+model QuizInstance {
+  id        String   @id @default(cuid())
+  quizId    String
+  userId    String
+  score     Int      @default(-1)
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  Quiz             Quizzes            @relation(fields: [quizId], references: [id])
+  User             User               @relation(fields: [userId], references: [id])
+  QuestionInstance QuestionInstance[]
+
+  @@map(name: "quiz_instances")
+}
+
+model QuestionInstance {
+  id             String   @id @default(cuid())
+  questionId     String
+  quizInstanceId String
+  answerId       String?  @default("")
+  createdAt      DateTime @default(now()) @map(name: "created_at")
+  updatedAt      DateTime @default(now()) @map(name: "updated_at")
+
+  Question     Questions    @relation(fields: [questionId], references: [id])
+  Answer       Answers?     @relation(fields: [answerId], references: [id])
+  QuizInstance QuizInstance @relation(fields: [quizInstanceId], references: [id])
+
+  @@map(name: "question_instances")
 }

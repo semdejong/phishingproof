@@ -54,7 +54,7 @@ export default async function handler(
     })
 
     if (!category) {
-      res.status(400).json({ message: "Category not found" })
+      return res.status(400).json({ message: "Category not found" })
     }
   }
 
@@ -69,12 +69,12 @@ export default async function handler(
     })
     .then((category) => {
       if (category) {
-        res.status(400).json({ message: "Quiz already exists" })
+        return res.status(400).json({ message: "Quiz already exists" })
       }
     })
     .catch((error) => {
       console.log(error)
-      res.status(400).json({
+      return res.status(400).json({
         message: "Something went wrong while trying to connect to the db",
       })
     })

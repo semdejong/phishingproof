@@ -64,6 +64,8 @@ export async function authenticated(
     }
   }
 
+  console.log(9893823, user)
+
   return user
 }
 
