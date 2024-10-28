@@ -8,11 +8,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "POST") {
+  if (req.method !== "PATCH") {
     // Handle GET request
     res
       .status(400)
-      .json({ message: "You can only use post verb to this endpoint" })
+      .json({ message: "You can only use patch verb to this endpoint" })
   }
 
   const session = (await authenticatedAdmin(req, res)) as any
@@ -21,9 +21,9 @@ export default async function handler(
     return res
   }
 
-  // Handle POST request
-  let label = req.body.label
-  const categories = req.body.categories
+  // Handle patch request
+  let label = req.body.label as string
+  const id = req.query.id as string
 
   if (!label || label === "") {
     label = "Quiz #" + uuidv4()
@@ -39,39 +39,18 @@ export default async function handler(
     })
   }
 
-  if (!categories || !Array.isArray(categories) || categories.length < 1) {
-    res.status(400).json({
-      message: "Categories are required and must be at least 1 of them",
-    })
-  }
-
-  console.log(categories)
-
-  //check if categories exist
-  for (let i = 0; i < categories.length; i++) {
-    const category = await db.categories.findUnique({
-     where: {
-      id: categories[i],
-     }
-    })
-
-    if (!category) {
-      return res.status(400).json({ message: "Category not found" })
-    }
-  }
-
-  await db.quizzes
+  await db.categories
     .findFirst({
       where: {
-        title: {
+        name: {
           equals: label,
           mode: "insensitive",
         },
       },
     })
     .then((category) => {
-      if (category) {
-        return res.status(400).json({ message: "Quiz already exists" })
+      if (category && category.id !== id) {
+        return res.status(400).json({ message: "Category already exists" })
       }
     })
     .catch((error) => {
@@ -81,18 +60,14 @@ export default async function handler(
       })
     })
 
-  const quiz = await db.quizzes.create({
+  const category = await db.categories.update({
+    where: {
+      id: id,
+    },
     data: {
-      title: label,
-      categories: {
-        connect: categories.map((category: any) => {
-          return {
-            id: category,
-          }
-        }),
-      },
+      name: label,
     },
   })
 
-  return res.status(200).json({ quiz })
+  return res.status(200).json({ category })
 }
